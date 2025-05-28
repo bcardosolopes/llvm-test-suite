@@ -1,3 +1,11 @@
+if (TEST_SUITE_CLANGIR_ENABLE)
+  message(STATUS "Enabling ClangIR for SingleSource tests")
+  add_compile_options(
+    $<$<COMPILE_LANGUAGE:C>:-fclangir>
+    $<$<COMPILE_LANGUAGE:CXX>:-fclangir>
+  )
+endif()
+
 add_subdirectory(7zip)
 add_subdirectory(Bullet)
 add_subdirectory(tramp3d-v4)

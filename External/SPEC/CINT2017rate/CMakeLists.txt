@@ -1,3 +1,11 @@
+if (TEST_SUITE_CLANGIR_ENABLE)
+  message(STATUS "Enabling ClangIR for SPEC tests")
+  add_compile_options(
+    $<$<COMPILE_LANGUAGE:C>:-fclangir>
+    $<$<COMPILE_LANGUAGE:CXX>:-fclangir>
+  )
+endif()
+
 add_subdirectory(500.perlbench_r)  # C
 add_subdirectory(502.gcc_r)        # C
 add_subdirectory(505.mcf_r)        # C

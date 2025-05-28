@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.13.4)
 
 include(CheckSymbolExists)
 
+option(TEST_SUITE_CLANGIR_ENABLE "Run tests through ClangIR" OFF)
 
 project(test-suite C CXX)
 

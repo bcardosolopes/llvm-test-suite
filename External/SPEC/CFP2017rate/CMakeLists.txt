@@ -1,3 +1,11 @@
+if (TEST_SUITE_CLANGIR_ENABLE)
+  message(STATUS "Enabling ClangIR for SPEC tests")
+  add_compile_options(
+    $<$<COMPILE_LANGUAGE:C>:-fclangir>
+    $<$<COMPILE_LANGUAGE:CXX>:-fclangir>
+  )
+endif()
+
 if (TEST_SUITE_FORTRAN)
   add_subdirectory(503.bwaves_r)    # Fortran
   add_subdirectory(507.cactuBSSN_r) # C++, C, Fortran
