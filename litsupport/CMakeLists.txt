@@ -7,6 +7,7 @@ set(LITSUPPORT_FILES
   testfile.py
   testplan.py
   test.py
+  modules/android.py
   modules/codesize.py
   modules/compiletime.py
   modules/hash.py

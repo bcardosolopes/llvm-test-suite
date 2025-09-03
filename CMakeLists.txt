@@ -115,6 +115,17 @@ if(TEST_SUITE_REMOTE_HOST)
   )
 endif()
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+  add_custom_target(push_android
+    COMMAND ${PROJECT_SOURCE_DIR}/utils/push_android.sh
+                ${TEST_SUITE_REMOTE_HOST}
+                ${TEST_SUITE_ANDROID_RUN_UNDER}
+                ${PROJECT_BINARY_DIR}
+                ${TEST_SUITE_ANDROID_PREBUILT_LOCATION}
+    USES_TERMINAL
+  )
+endif()
+
 # Run Under configuration for RunSafely.sh (will be set in lit.site.cfg)
 set(TEST_SUITE_RUN_UNDER "" CACHE STRING "RunSafely.sh run-under (-u) parameter")
 
