@@ -170,6 +170,12 @@ def getMainExecutable(context):
             logging.warning(
                 "More than one executable used in test %s", context.test.getFullName()
             )
+            # Keep the first, as documented above. The later run lines of
+            # SPEC CPU 2026's 734.vpr_r and 735.gem5_r invoke a small helper
+            # that post-processes the benchmark's output; attributing the
+            # test's size and md5sum to that helper rather than to the
+            # benchmark would be actively misleading.
+            continue
         executable = new_executable
     if executable is None:
         logging.warning("No executable found for test %s", context.test.getFullName())

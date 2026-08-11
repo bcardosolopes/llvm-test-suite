@@ -38,7 +38,10 @@ class TestSuiteTest(lit.formats.ShTest):
 
         # Parse .test file and initialize context
         tmpDir, tmpBase = lit.TestRunner.getTempPaths(test)
-        lit.util.mkdir_p(os.path.dirname(tmpBase))
+        # lit.util.mkdir_p was removed from LLVM's lit; os.makedirs has done
+        # the same thing since it grew exist_ok, and it also works with the
+        # older lit that still ships mkdir_p.
+        os.makedirs(os.path.dirname(tmpBase), exist_ok=True)
         context = litsupport.testplan.TestContext(test, litConfig, tmpDir, tmpBase)
         litsupport.testfile.parse(context, test.getSourcePath())
         plan = litsupport.testplan.TestPlan()
