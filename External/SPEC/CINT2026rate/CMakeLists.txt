@@ -1,11 +1,3 @@
-if (TEST_SUITE_CLANGIR_ENABLE)
-  message(STATUS "Enabling ClangIR for SPEC tests")
-  add_compile_options(
-    $<$<COMPILE_LANGUAGE:C>:-fclangir>
-    $<$<COMPILE_LANGUAGE:CXX>:-fclangir>
-  )
-endif()
-
 add_subdirectory(706.stockfish_r)   # C++
 add_subdirectory(707.ntest_r)       # C++
 add_subdirectory(708.sqlite_r)      # C

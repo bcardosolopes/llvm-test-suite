@@ -1,4 +1,4 @@
-# 734.vpr_r
+# 834.vpr_s
 # Generated from SPEC's own runcpu build and setup logs by
 # clangir-upstream-report/spec2026-overlay/gen-cmakelists.py, then
 # reviewed by hand. Sources, -D/-I flags and RUN lines are exactly what
@@ -8,7 +8,13 @@ if (NOT TEST_SUITE_SPEC2026_ROOT)
   return ()
 endif ()
 
-speccpu2026_benchmark(RATE)
+speccpu2026_benchmark(SPEED ORIGIN 734.vpr_r)
+
+# Not a speccpu2026_inherit(../../CINT2026rate/734.vpr_r): unlike the
+# 2017 speed suites, this does not build the same binary as 734.vpr_r
+# -- runcpu compiles it with different flags, sources, reference outputs
+# or tolerances. Inheriting would silently build the wrong thing. ORIGIN
+# above is still what points SRC_DIR at the twin's sources.
 
 ###############################################################################
 # vpr
@@ -64,8 +70,8 @@ speccpu2026_run_test(
   --sdc_file murax_stratixiv_arch_timing.sdc --pack_verbosity 0
   --netlist_verbosity 0 --base_cost_type demand_only --inner_num 4
   --read_initial_place_file ref_murax_stratixiv_arch_timing.init.place --place
-  STDOUT murax_stratixiv_arch_timing.blif.place.out
-  STDERR murax_stratixiv_arch_timing.blif.place.err
+  STDOUT murax_stratixiv_arch_timing.blif.out
+  STDERR murax_stratixiv_arch_timing.blif.err
   RUN_TYPE test
 )
 
@@ -79,8 +85,8 @@ speccpu2026_run_test(
   --sdc_file murax_stratixiv_arch_timing.sdc --pack_verbosity 0
   --netlist_verbosity 0 --place_file ref_murax_stratixiv_arch_timing.place
   --base_cost_type demand_only --analysis --route
-  STDOUT murax_stratixiv_arch_timing.blif.route.out
-  STDERR murax_stratixiv_arch_timing.blif.route.err
+  STDOUT murax_stratixiv_arch_timing.blif.out
+  STDERR murax_stratixiv_arch_timing.blif.err
   RUN_TYPE test
 )
 
@@ -179,8 +185,8 @@ speccpu2026_run_test(
   --netlist_verbosity 0 --base_cost_type demand_only --inner_num 4
   --read_initial_place_file ref_sudoku_check_stratixiv_arch_timing.init.place
   --place
-  STDOUT sudoku_check_stratixiv_arch_timing.blif.place.out
-  STDERR sudoku_check_stratixiv_arch_timing.blif.place.err
+  STDOUT sudoku_check_stratixiv_arch_timing.blif.out
+  STDERR sudoku_check_stratixiv_arch_timing.blif.err
   RUN_TYPE train
 )
 
@@ -194,8 +200,8 @@ speccpu2026_run_test(
   --sdc_file sudoku_check_stratixiv_arch_timing.sdc --pack_verbosity 0
   --netlist_verbosity 0 --base_cost_type demand_only
   --place_file ref_sudoku_check_stratixiv_arch_timing.place --analysis --route
-  STDOUT sudoku_check_stratixiv_arch_timing.blif.route.out
-  STDERR sudoku_check_stratixiv_arch_timing.blif.route.err
+  STDOUT sudoku_check_stratixiv_arch_timing.blif.out
+  STDERR sudoku_check_stratixiv_arch_timing.blif.err
   RUN_TYPE train
 )
 
@@ -284,230 +290,230 @@ speccpu2026_run_test(
 ## ref #######################################################################
 
 speccpu2026_run_test(
-  stratixiv_arch.timing.xml JPEG_stratixiv_arch_timing.blif
+  stratixiv_arch.timing.xml sparcT1_core_stratixiv_arch_timing.blif
   --RL_agent_placement off --place_algorithm bounding_box
   --max_criticality 0.0 --init_t 512 --alpha_t 0.75 --exit_t 1
   --router_initial_timing all_critical --routing_failure_predictor off
   --route_chan_width 300 --max_router_iterations 20 --router_lookahead classic
   --initial_pres_fac 1.0 --pres_fac_mult 2.0 --astar_fac 1.5
   --router_profiler_astar_fac 1.5 --seed 3
-  --sdc_file JPEG_stratixiv_arch_timing.sdc --pack_verbosity 0
-  --netlist_verbosity 0 --base_cost_type demand_only --inner_num 4
-  --read_initial_place_file ref_JPEG_stratixiv_arch_timing.init.place --place
-  STDOUT JPEG_stratixiv_arch_timing.blif.place.out
-  STDERR JPEG_stratixiv_arch_timing.blif.place.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  stratixiv_arch.timing.xml JPEG_stratixiv_arch_timing.blif
-  --place_algorithm bounding_box --place_static_notiming_move_prob 50 25 25
-  --max_criticality 0.0 --router_initial_timing all_critical
-  --routing_failure_predictor off --route_chan_width 300
-  --max_router_iterations 20 --router_lookahead classic --initial_pres_fac 1.0
-  --pres_fac_mult 2.0 --astar_fac 1.5 --router_profiler_astar_fac 1.5 --seed 3
-  --sdc_file JPEG_stratixiv_arch_timing.sdc --pack_verbosity 0
-  --netlist_verbosity 0 --base_cost_type demand_only
-  --place_file ref_JPEG_stratixiv_arch_timing.place --analysis --route
-  STDOUT JPEG_stratixiv_arch_timing.blif.route.out
-  STDERR JPEG_stratixiv_arch_timing.blif.route.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  stratixiv_arch.timing.xml smithwaterman_stratixiv_arch_timing.blif
-  --RL_agent_placement off --place_algorithm bounding_box
-  --max_criticality 0.0 --init_t 512 --alpha_t 0.75 --exit_t 1
-  --router_initial_timing all_critical --routing_failure_predictor off
-  --route_chan_width 300 --max_router_iterations 20 --router_lookahead classic
-  --initial_pres_fac 1.0 --pres_fac_mult 2.0 --astar_fac 1.5
-  --router_profiler_astar_fac 1.5 --seed 3
-  --sdc_file smithwaterman_stratixiv_arch_timing.sdc --pack_verbosity 0
-  --netlist_verbosity 0 --base_cost_type demand_only --inner_num 1.8
-  --read_initial_place_file ref_smithwaterman_stratixiv_arch_timing.init.place
+  --sdc_file sparcT1_core_stratixiv_arch_timing.sdc --pack_verbosity 0
+  --netlist_verbosity 0 --base_cost_type demand_only --inner_num 3
+  --read_initial_place_file ref_sparcT1_core_stratixiv_arch_timing.init.place
   --place
-  STDOUT smithwaterman_stratixiv_arch_timing.blif.place.out
-  STDERR smithwaterman_stratixiv_arch_timing.blif.place.err
+  STDOUT sparcT1_core_stratixiv_arch_timing.blif.out
+  STDERR sparcT1_core_stratixiv_arch_timing.blif.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
-  stratixiv_arch.timing.xml smithwaterman_stratixiv_arch_timing.blif
+  stratixiv_arch.timing.xml sparcT1_core_stratixiv_arch_timing.blif
   --place_algorithm bounding_box --place_static_notiming_move_prob 50 25 25
   --max_criticality 0.0 --router_initial_timing all_critical
   --routing_failure_predictor off --route_chan_width 300
   --max_router_iterations 20 --router_lookahead classic --initial_pres_fac 1.0
   --pres_fac_mult 2.0 --astar_fac 1.5 --router_profiler_astar_fac 1.5 --seed 3
-  --sdc_file smithwaterman_stratixiv_arch_timing.sdc --pack_verbosity 0
+  --sdc_file sparcT1_core_stratixiv_arch_timing.sdc --pack_verbosity 0
   --netlist_verbosity 0 --base_cost_type demand_only
-  --place_file ref_smithwaterman_stratixiv_arch_timing.place --analysis
-  --route
-  STDOUT smithwaterman_stratixiv_arch_timing.blif.route.out
-  STDERR smithwaterman_stratixiv_arch_timing.blif.route.err
+  --place_file ref_sparcT1_core_stratixiv_arch_timing.place --analysis --route
+  STDOUT sparcT1_core_stratixiv_arch_timing.blif.out
+  STDERR sparcT1_core_stratixiv_arch_timing.blif.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  stratixiv_arch.timing.xml wb_conmax_stratixiv_arch_timing.blif
+  --RL_agent_placement off --place_algorithm bounding_box
+  --max_criticality 0.0 --init_t 512 --alpha_t 0.75 --exit_t 1
+  --router_initial_timing all_critical --routing_failure_predictor off
+  --route_chan_width 300 --max_router_iterations 20 --router_lookahead classic
+  --initial_pres_fac 1.0 --pres_fac_mult 2.0 --astar_fac 1.5
+  --router_profiler_astar_fac 1.5 --seed 3
+  --sdc_file wb_conmax_stratixiv_arch_timing.sdc --pack_verbosity 0
+  --netlist_verbosity 0 --base_cost_type demand_only --inner_num 10
+  --read_initial_place_file ref_wb_conmax_stratixiv_arch_timing.init.place
+  --place
+  STDOUT wb_conmax_stratixiv_arch_timing.blif.out
+  STDERR wb_conmax_stratixiv_arch_timing.blif.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  stratixiv_arch.timing.xml wb_conmax_stratixiv_arch_timing.blif
+  --place_algorithm bounding_box --place_static_notiming_move_prob 50 25 25
+  --max_criticality 0.0 --router_initial_timing all_critical
+  --routing_failure_predictor off --route_chan_width 300
+  --max_router_iterations 30 --router_lookahead classic
+  --initial_pres_fac 0.0009765625 --pres_fac_mult 2.0 --astar_fac 1.5
+  --router_profiler_astar_fac 1.5 --seed 3
+  --sdc_file wb_conmax_stratixiv_arch_timing.sdc --pack_verbosity 0
+  --netlist_verbosity 0 --base_cost_type demand_only
+  --place_file ref_wb_conmax_stratixiv_arch_timing.place --analysis --route
+  STDOUT wb_conmax_stratixiv_arch_timing.blif.out
+  STDERR wb_conmax_stratixiv_arch_timing.blif.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
   BINARY ${BENCHMARK}.vpr_out_compare
-  swap_call compare/JPEG_stratixiv_arch_timing.blif.place.log
-  JPEG_stratixiv_arch_timing.blif.place.log
-  STDOUT compare_JPEG_stratixiv_arch_timing.blif.place.log.swap_call.out
-  STDERR compare_JPEG_stratixiv_arch_timing.blif.place.log.swap_call.err
+  swap_call compare/sparcT1_core_stratixiv_arch_timing.blif.place.log
+  sparcT1_core_stratixiv_arch_timing.blif.place.log
+  STDOUT compare_sparcT1_core_stratixiv_arch_timing.blif.place.log.swap_call.out
+  STDERR compare_sparcT1_core_stratixiv_arch_timing.blif.place.log.swap_call.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
   BINARY ${BENCHMARK}.vpr_out_compare
-  swap_accepted compare/JPEG_stratixiv_arch_timing.blif.place.log
-  JPEG_stratixiv_arch_timing.blif.place.log
-  STDOUT compare_JPEG_stratixiv_arch_timing.blif.place.log.swap_accepted.out
-  STDERR compare_JPEG_stratixiv_arch_timing.blif.place.log.swap_accepted.err
+  swap_accepted compare/sparcT1_core_stratixiv_arch_timing.blif.place.log
+  sparcT1_core_stratixiv_arch_timing.blif.place.log
+  STDOUT compare_sparcT1_core_stratixiv_arch_timing.blif.place.log.swap_accepted.out
+  STDERR compare_sparcT1_core_stratixiv_arch_timing.blif.place.log.swap_accepted.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
   BINARY ${BENCHMARK}.vpr_out_compare
-  swap_rejected compare/JPEG_stratixiv_arch_timing.blif.place.log
-  JPEG_stratixiv_arch_timing.blif.place.log
-  STDOUT compare_JPEG_stratixiv_arch_timing.blif.place.log.swap_rejected.out
-  STDERR compare_JPEG_stratixiv_arch_timing.blif.place.log.swap_rejected.err
+  swap_rejected compare/sparcT1_core_stratixiv_arch_timing.blif.place.log
+  sparcT1_core_stratixiv_arch_timing.blif.place.log
+  STDOUT compare_sparcT1_core_stratixiv_arch_timing.blif.place.log.swap_rejected.out
+  STDERR compare_sparcT1_core_stratixiv_arch_timing.blif.place.log.swap_rejected.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
   BINARY ${BENCHMARK}.vpr_out_compare
-  num_rr_nodes compare/JPEG_stratixiv_arch_timing.blif.route.log
-  JPEG_stratixiv_arch_timing.blif.route.log
-  STDOUT compare_JPEG_stratixiv_arch_timing.blif.route.log.num_rr_nodes.out
-  STDERR compare_JPEG_stratixiv_arch_timing.blif.route.log.num_rr_nodes.err
+  num_rr_nodes compare/sparcT1_core_stratixiv_arch_timing.blif.route.log
+  sparcT1_core_stratixiv_arch_timing.blif.route.log
+  STDOUT compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.num_rr_nodes.out
+  STDERR compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.num_rr_nodes.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
   BINARY ${BENCHMARK}.vpr_out_compare
-  num_rr_edges compare/JPEG_stratixiv_arch_timing.blif.route.log
-  JPEG_stratixiv_arch_timing.blif.route.log
-  STDOUT compare_JPEG_stratixiv_arch_timing.blif.route.log.num_rr_edges.out
-  STDERR compare_JPEG_stratixiv_arch_timing.blif.route.log.num_rr_edges.err
+  num_rr_edges compare/sparcT1_core_stratixiv_arch_timing.blif.route.log
+  sparcT1_core_stratixiv_arch_timing.blif.route.log
+  STDOUT compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.num_rr_edges.out
+  STDERR compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.num_rr_edges.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
   BINARY ${BENCHMARK}.vpr_out_compare
-  heap_pushes compare/JPEG_stratixiv_arch_timing.blif.route.log
-  JPEG_stratixiv_arch_timing.blif.route.log
-  STDOUT compare_JPEG_stratixiv_arch_timing.blif.route.log.heap_pushes.out
-  STDERR compare_JPEG_stratixiv_arch_timing.blif.route.log.heap_pushes.err
+  heap_pushes compare/sparcT1_core_stratixiv_arch_timing.blif.route.log
+  sparcT1_core_stratixiv_arch_timing.blif.route.log
+  STDOUT compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.heap_pushes.out
+  STDERR compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.heap_pushes.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
   BINARY ${BENCHMARK}.vpr_out_compare
-  heap_pops compare/JPEG_stratixiv_arch_timing.blif.route.log
-  JPEG_stratixiv_arch_timing.blif.route.log
-  STDOUT compare_JPEG_stratixiv_arch_timing.blif.route.log.heap_pops.out
-  STDERR compare_JPEG_stratixiv_arch_timing.blif.route.log.heap_pops.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  BINARY ${BENCHMARK}.vpr_out_compare
-  critical_path_delay compare/JPEG_stratixiv_arch_timing.blif.route.log
-  JPEG_stratixiv_arch_timing.blif.route.log
-  STDOUT compare_JPEG_stratixiv_arch_timing.blif.route.log.critical_path_delay.out
-  STDERR compare_JPEG_stratixiv_arch_timing.blif.route.log.critical_path_delay.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  BINARY ${BENCHMARK}.vpr_out_compare
-  routed_wire_length compare/JPEG_stratixiv_arch_timing.blif.route.log
-  JPEG_stratixiv_arch_timing.blif.route.log
-  STDOUT compare_JPEG_stratixiv_arch_timing.blif.route.log.routed_wire_length.out
-  STDERR compare_JPEG_stratixiv_arch_timing.blif.route.log.routed_wire_length.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  BINARY ${BENCHMARK}.vpr_out_compare
-  swap_call compare/smithwaterman_stratixiv_arch_timing.blif.place.log
-  smithwaterman_stratixiv_arch_timing.blif.place.log
-  STDOUT compare_smithwaterman_stratixiv_arch_timing.blif.place.log.swap_call.out
-  STDERR compare_smithwaterman_stratixiv_arch_timing.blif.place.log.swap_call.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  BINARY ${BENCHMARK}.vpr_out_compare
-  swap_accepted compare/smithwaterman_stratixiv_arch_timing.blif.place.log
-  smithwaterman_stratixiv_arch_timing.blif.place.log
-  STDOUT compare_smithwaterman_stratixiv_arch_timing.blif.place.log.swap_accepted.out
-  STDERR compare_smithwaterman_stratixiv_arch_timing.blif.place.log.swap_accepted.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  BINARY ${BENCHMARK}.vpr_out_compare
-  swap_rejected compare/smithwaterman_stratixiv_arch_timing.blif.place.log
-  smithwaterman_stratixiv_arch_timing.blif.place.log
-  STDOUT compare_smithwaterman_stratixiv_arch_timing.blif.place.log.swap_rejected.out
-  STDERR compare_smithwaterman_stratixiv_arch_timing.blif.place.log.swap_rejected.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  BINARY ${BENCHMARK}.vpr_out_compare
-  num_rr_nodes compare/smithwaterman_stratixiv_arch_timing.blif.route.log
-  smithwaterman_stratixiv_arch_timing.blif.route.log
-  STDOUT compare_smithwaterman_stratixiv_arch_timing.blif.route.log.num_rr_nodes.out
-  STDERR compare_smithwaterman_stratixiv_arch_timing.blif.route.log.num_rr_nodes.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  BINARY ${BENCHMARK}.vpr_out_compare
-  num_rr_edges compare/smithwaterman_stratixiv_arch_timing.blif.route.log
-  smithwaterman_stratixiv_arch_timing.blif.route.log
-  STDOUT compare_smithwaterman_stratixiv_arch_timing.blif.route.log.num_rr_edges.out
-  STDERR compare_smithwaterman_stratixiv_arch_timing.blif.route.log.num_rr_edges.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  BINARY ${BENCHMARK}.vpr_out_compare
-  heap_pushes compare/smithwaterman_stratixiv_arch_timing.blif.route.log
-  smithwaterman_stratixiv_arch_timing.blif.route.log
-  STDOUT compare_smithwaterman_stratixiv_arch_timing.blif.route.log.heap_pushes.out
-  STDERR compare_smithwaterman_stratixiv_arch_timing.blif.route.log.heap_pushes.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  BINARY ${BENCHMARK}.vpr_out_compare
-  heap_pops compare/smithwaterman_stratixiv_arch_timing.blif.route.log
-  smithwaterman_stratixiv_arch_timing.blif.route.log
-  STDOUT compare_smithwaterman_stratixiv_arch_timing.blif.route.log.heap_pops.out
-  STDERR compare_smithwaterman_stratixiv_arch_timing.blif.route.log.heap_pops.err
+  heap_pops compare/sparcT1_core_stratixiv_arch_timing.blif.route.log
+  sparcT1_core_stratixiv_arch_timing.blif.route.log
+  STDOUT compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.heap_pops.out
+  STDERR compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.heap_pops.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
   BINARY ${BENCHMARK}.vpr_out_compare
   critical_path_delay
-  compare/smithwaterman_stratixiv_arch_timing.blif.route.log
-  smithwaterman_stratixiv_arch_timing.blif.route.log
-  STDOUT compare_smithwaterman_stratixiv_arch_timing.blif.route.log.critical_path_delay.out
-  STDERR compare_smithwaterman_stratixiv_arch_timing.blif.route.log.critical_path_delay.err
+  compare/sparcT1_core_stratixiv_arch_timing.blif.route.log
+  sparcT1_core_stratixiv_arch_timing.blif.route.log
+  STDOUT compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.critical_path_delay.out
+  STDERR compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.critical_path_delay.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
   BINARY ${BENCHMARK}.vpr_out_compare
-  routed_wire_length
-  compare/smithwaterman_stratixiv_arch_timing.blif.route.log
-  smithwaterman_stratixiv_arch_timing.blif.route.log
-  STDOUT compare_smithwaterman_stratixiv_arch_timing.blif.route.log.routed_wire_length.out
-  STDERR compare_smithwaterman_stratixiv_arch_timing.blif.route.log.routed_wire_length.err
+  routed_wire_length compare/sparcT1_core_stratixiv_arch_timing.blif.route.log
+  sparcT1_core_stratixiv_arch_timing.blif.route.log
+  STDOUT compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.routed_wire_length.out
+  STDERR compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.routed_wire_length.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  BINARY ${BENCHMARK}.vpr_out_compare
+  swap_call compare/wb_conmax_stratixiv_arch_timing.blif.place.log
+  wb_conmax_stratixiv_arch_timing.blif.place.log
+  STDOUT compare_wb_conmax_stratixiv_arch_timing.blif.place.log.swap_call.out
+  STDERR compare_wb_conmax_stratixiv_arch_timing.blif.place.log.swap_call.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  BINARY ${BENCHMARK}.vpr_out_compare
+  swap_accepted compare/wb_conmax_stratixiv_arch_timing.blif.place.log
+  wb_conmax_stratixiv_arch_timing.blif.place.log
+  STDOUT compare_wb_conmax_stratixiv_arch_timing.blif.place.log.swap_accepted.out
+  STDERR compare_wb_conmax_stratixiv_arch_timing.blif.place.log.swap_accepted.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  BINARY ${BENCHMARK}.vpr_out_compare
+  swap_rejected compare/wb_conmax_stratixiv_arch_timing.blif.place.log
+  wb_conmax_stratixiv_arch_timing.blif.place.log
+  STDOUT compare_wb_conmax_stratixiv_arch_timing.blif.place.log.swap_rejected.out
+  STDERR compare_wb_conmax_stratixiv_arch_timing.blif.place.log.swap_rejected.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  BINARY ${BENCHMARK}.vpr_out_compare
+  num_rr_nodes compare/wb_conmax_stratixiv_arch_timing.blif.route.log
+  wb_conmax_stratixiv_arch_timing.blif.route.log
+  STDOUT compare_wb_conmax_stratixiv_arch_timing.blif.route.log.num_rr_nodes.out
+  STDERR compare_wb_conmax_stratixiv_arch_timing.blif.route.log.num_rr_nodes.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  BINARY ${BENCHMARK}.vpr_out_compare
+  num_rr_edges compare/wb_conmax_stratixiv_arch_timing.blif.route.log
+  wb_conmax_stratixiv_arch_timing.blif.route.log
+  STDOUT compare_wb_conmax_stratixiv_arch_timing.blif.route.log.num_rr_edges.out
+  STDERR compare_wb_conmax_stratixiv_arch_timing.blif.route.log.num_rr_edges.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  BINARY ${BENCHMARK}.vpr_out_compare
+  heap_pushes compare/wb_conmax_stratixiv_arch_timing.blif.route.log
+  wb_conmax_stratixiv_arch_timing.blif.route.log
+  STDOUT compare_wb_conmax_stratixiv_arch_timing.blif.route.log.heap_pushes.out
+  STDERR compare_wb_conmax_stratixiv_arch_timing.blif.route.log.heap_pushes.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  BINARY ${BENCHMARK}.vpr_out_compare
+  heap_pops compare/wb_conmax_stratixiv_arch_timing.blif.route.log
+  wb_conmax_stratixiv_arch_timing.blif.route.log
+  STDOUT compare_wb_conmax_stratixiv_arch_timing.blif.route.log.heap_pops.out
+  STDERR compare_wb_conmax_stratixiv_arch_timing.blif.route.log.heap_pops.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  BINARY ${BENCHMARK}.vpr_out_compare
+  critical_path_delay compare/wb_conmax_stratixiv_arch_timing.blif.route.log
+  wb_conmax_stratixiv_arch_timing.blif.route.log
+  STDOUT compare_wb_conmax_stratixiv_arch_timing.blif.route.log.critical_path_delay.out
+  STDERR compare_wb_conmax_stratixiv_arch_timing.blif.route.log.critical_path_delay.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  BINARY ${BENCHMARK}.vpr_out_compare
+  routed_wire_length compare/wb_conmax_stratixiv_arch_timing.blif.route.log
+  wb_conmax_stratixiv_arch_timing.blif.route.log
+  STDOUT compare_wb_conmax_stratixiv_arch_timing.blif.route.log.routed_wire_length.out
+  STDERR compare_wb_conmax_stratixiv_arch_timing.blif.route.log.routed_wire_length.err
   RUN_TYPE ref
 )
 
@@ -515,15 +521,6 @@ speccpu2026_run_test(
 
 speccpu2026_verify_output(
   FILES
-    compare_JPEG_stratixiv_arch_timing.blif.place.log.swap_accepted.out
-    compare_JPEG_stratixiv_arch_timing.blif.place.log.swap_call.out
-    compare_JPEG_stratixiv_arch_timing.blif.place.log.swap_rejected.out
-    compare_JPEG_stratixiv_arch_timing.blif.route.log.critical_path_delay.out
-    compare_JPEG_stratixiv_arch_timing.blif.route.log.heap_pops.out
-    compare_JPEG_stratixiv_arch_timing.blif.route.log.heap_pushes.out
-    compare_JPEG_stratixiv_arch_timing.blif.route.log.num_rr_edges.out
-    compare_JPEG_stratixiv_arch_timing.blif.route.log.num_rr_nodes.out
-    compare_JPEG_stratixiv_arch_timing.blif.route.log.routed_wire_length.out
     compare_murax_stratixiv_arch_timing.blif.place.log.swap_accepted.out
     compare_murax_stratixiv_arch_timing.blif.place.log.swap_call.out
     compare_murax_stratixiv_arch_timing.blif.place.log.swap_rejected.out
@@ -533,15 +530,15 @@ speccpu2026_verify_output(
     compare_murax_stratixiv_arch_timing.blif.route.log.num_rr_edges.out
     compare_murax_stratixiv_arch_timing.blif.route.log.num_rr_nodes.out
     compare_murax_stratixiv_arch_timing.blif.route.log.routed_wire_length.out
-    compare_smithwaterman_stratixiv_arch_timing.blif.place.log.swap_accepted.out
-    compare_smithwaterman_stratixiv_arch_timing.blif.place.log.swap_call.out
-    compare_smithwaterman_stratixiv_arch_timing.blif.place.log.swap_rejected.out
-    compare_smithwaterman_stratixiv_arch_timing.blif.route.log.critical_path_delay.out
-    compare_smithwaterman_stratixiv_arch_timing.blif.route.log.heap_pops.out
-    compare_smithwaterman_stratixiv_arch_timing.blif.route.log.heap_pushes.out
-    compare_smithwaterman_stratixiv_arch_timing.blif.route.log.num_rr_edges.out
-    compare_smithwaterman_stratixiv_arch_timing.blif.route.log.num_rr_nodes.out
-    compare_smithwaterman_stratixiv_arch_timing.blif.route.log.routed_wire_length.out
+    compare_sparcT1_core_stratixiv_arch_timing.blif.place.log.swap_accepted.out
+    compare_sparcT1_core_stratixiv_arch_timing.blif.place.log.swap_call.out
+    compare_sparcT1_core_stratixiv_arch_timing.blif.place.log.swap_rejected.out
+    compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.critical_path_delay.out
+    compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.heap_pops.out
+    compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.heap_pushes.out
+    compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.num_rr_edges.out
+    compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.num_rr_nodes.out
+    compare_sparcT1_core_stratixiv_arch_timing.blif.route.log.routed_wire_length.out
     compare_sudoku_check_stratixiv_arch_timing.blif.place.log.swap_accepted.out
     compare_sudoku_check_stratixiv_arch_timing.blif.place.log.swap_call.out
     compare_sudoku_check_stratixiv_arch_timing.blif.place.log.swap_rejected.out
@@ -551,6 +548,15 @@ speccpu2026_verify_output(
     compare_sudoku_check_stratixiv_arch_timing.blif.route.log.num_rr_edges.out
     compare_sudoku_check_stratixiv_arch_timing.blif.route.log.num_rr_nodes.out
     compare_sudoku_check_stratixiv_arch_timing.blif.route.log.routed_wire_length.out
+    compare_wb_conmax_stratixiv_arch_timing.blif.place.log.swap_accepted.out
+    compare_wb_conmax_stratixiv_arch_timing.blif.place.log.swap_call.out
+    compare_wb_conmax_stratixiv_arch_timing.blif.place.log.swap_rejected.out
+    compare_wb_conmax_stratixiv_arch_timing.blif.route.log.critical_path_delay.out
+    compare_wb_conmax_stratixiv_arch_timing.blif.route.log.heap_pops.out
+    compare_wb_conmax_stratixiv_arch_timing.blif.route.log.heap_pushes.out
+    compare_wb_conmax_stratixiv_arch_timing.blif.route.log.num_rr_edges.out
+    compare_wb_conmax_stratixiv_arch_timing.blif.route.log.num_rr_nodes.out
+    compare_wb_conmax_stratixiv_arch_timing.blif.route.log.routed_wire_length.out
 )
 
 speccpu2026_add_executable(
@@ -814,14 +820,14 @@ speccpu2026_generate_inputs(
 speccpu2026_generate_inputs(
   RUN_TYPE ref
   FILES
-    JPEG_stratixiv_arch_timing.blif.xz
-    JPEG_stratixiv_arch_timing.net.xz
-    ref_JPEG_stratixiv_arch_timing.init.place.xz
-    ref_JPEG_stratixiv_arch_timing.place.xz
-    ref_smithwaterman_stratixiv_arch_timing.init.place.xz
-    ref_smithwaterman_stratixiv_arch_timing.place.xz
-    smithwaterman_stratixiv_arch_timing.blif.xz
-    smithwaterman_stratixiv_arch_timing.net.xz
+    ref_sparcT1_core_stratixiv_arch_timing.init.place.xz
+    ref_sparcT1_core_stratixiv_arch_timing.place.xz
+    ref_wb_conmax_stratixiv_arch_timing.init.place.xz
+    ref_wb_conmax_stratixiv_arch_timing.place.xz
+    sparcT1_core_stratixiv_arch_timing.blif.xz
+    sparcT1_core_stratixiv_arch_timing.net.xz
+    wb_conmax_stratixiv_arch_timing.blif.xz
+    wb_conmax_stratixiv_arch_timing.net.xz
 )
 
 ###############################################################################

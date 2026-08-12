@@ -19,6 +19,9 @@ add_definitions(
   -DUSE_MAGIC_MSB
 )
 
+add_compile_options(-pthread)
+list(APPEND LDFLAGS -pthread)
+
 ## test ######################################################################
 
 speccpu2026_run_test(

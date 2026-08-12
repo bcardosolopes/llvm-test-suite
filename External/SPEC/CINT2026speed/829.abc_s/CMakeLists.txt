@@ -1,4 +1,4 @@
-# 729.abc_r
+# 829.abc_s
 # Generated from SPEC's own runcpu build and setup logs by
 # clangir-upstream-report/spec2026-overlay/gen-cmakelists.py, then
 # reviewed by hand. Sources, -D/-I flags and RUN lines are exactly what
@@ -8,7 +8,13 @@ if (NOT TEST_SUITE_SPEC2026_ROOT)
   return ()
 endif ()
 
-speccpu2026_benchmark(RATE)
+speccpu2026_benchmark(SPEED ORIGIN 729.abc_r)
+
+# Not a speccpu2026_inherit(../../CINT2026rate/729.abc_r): unlike the
+# 2017 speed suites, this does not build the same binary as 729.abc_r
+# -- runcpu compiles it with different flags, sources, reference outputs
+# or tolerances. Inheriting would silently build the wrong thing. ORIGIN
+# above is still what points SRC_DIR at the twin's sources.
 
 speccpu2026_add_include_dirs(
   spec_qsort
@@ -73,53 +79,17 @@ speccpu2026_run_test(
 
 ## ref #######################################################################
 
-speccpu2026_remove_stale_output(
-  RUN_TYPE ref
-  FILES
-    beem6.out.aig
-    mem_ctrl.out.aig
-    vga_lcd_miter.out.aig
-)
-
 speccpu2026_run_test(
-  -F twoexact.in
-  STDOUT twoexact.out
-  STDERR twoexact.err
+  -F ethernet-fraig.in
+  STDOUT ethernet-fraig.out
+  STDERR ethernet-fraig.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
-  -F beem6-fraig.in
-  STDOUT beem6-fraig.out
-  STDERR beem6-fraig.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  -F mem_ctrl.in
-  STDOUT mem_ctrl.out
-  STDERR mem_ctrl.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  -F vga_lcd_miter.in
-  STDOUT vga_lcd_miter.out
-  STDERR vga_lcd_miter.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  -F mcml.in
-  STDOUT mcml.out
-  STDERR mcml.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  -F des_system90.in
-  STDOUT des_system90.out
-  STDERR des_system90.err
+  -F bitcoin.in
+  STDOUT bitcoin.out
+  STDERR bitcoin.err
   RUN_TYPE ref
 )
 

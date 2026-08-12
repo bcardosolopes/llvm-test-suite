@@ -10,6 +10,12 @@ include(CopyDir)
 include(Host)
 include(Fortran)
 
+# Where this file lives, captured at include() time. The macros below cannot
+# ask for it themselves: CMAKE_CURRENT_LIST_DIR is the *including* benchmark's
+# directory inside a macro, and CMAKE_CURRENT_FUNCTION_LIST_DIR is only set in
+# a function.
+set(SPEC2026_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}")
+
 # Search for SPEC CPU 2026 root directory.
 llvm_externals_find(TEST_SUITE_SPEC2026_ROOT "speccpu2026" "SPEC CPU2026")
 if (NOT TEST_SUITE_SPEC2026_ROOT)
@@ -31,6 +37,10 @@ if (NOT TARGET speccpu2026_dummy)
     message(FATAL_ERROR
       "TEST_SUITE_RUN_TYPE must be 'train', 'test' or 'ref' for SPEC")
   endif()
+
+  if (TEST_SUITE_CLANGIR_ENABLE)
+    message(STATUS "Enabling ClangIR for SPEC CPU 2026")
+  endif ()
 
   add_custom_target(speccpu2026_dummy)
 endif ()
@@ -124,6 +134,13 @@ macro (speccpu2026_benchmark)
       $<$<COMPILE_LANGUAGE:CXX>:-std=c++17>
     )
 
+    if (TEST_SUITE_CLANGIR_ENABLE)
+      add_compile_options(
+        $<$<COMPILE_LANGUAGE:C>:-fclangir>
+        $<$<COMPILE_LANGUAGE:CXX>:-fclangir>
+      )
+    endif ()
+
     # Mandatory SPEC definitions.
     #
     # This is a much shorter list than SPEC CPU 2017's, and deliberately so.
@@ -142,6 +159,23 @@ macro (speccpu2026_benchmark)
       # rate benchmarks never use parallelism. 2026 spells this
       # SPEC_AUTO_SUPPRESS_THREADING; SPEC_AUTO_SUPPRESS_OPENMP is gone.
       list(APPEND SPEC_COMMON_DEFS "-DSPEC_AUTO_SUPPRESS_THREADING")
+    endif ()
+
+    if (SPEED)
+      # No OpenMP for the moment, even for the _s suites -- same call
+      # SpecCPU2017.cmake makes, and for the same reason: the harness has no
+      # way to pick an OpenMP runtime, and several of the clangs we test are
+      # built without one.
+      #
+      # SPEC_AUTO_SUPPRESS_THREADING (used for RATE above) is not the right
+      # macro here: it switches off *all* threading, including the C++
+      # std::thread use in the cxxthreads benchmarks, which the _s suites do
+      # keep. The 2026 sources guard their OpenMP regions with
+      #   #if (defined(SPEC_OPENMP) || defined(SPEC_OPENMP_TARGET)) &&
+      #       !(defined(SPEC_SUPPRESS_OPENMP) || defined(SPEC_AUTO_SUPPRESS_OPENMP))
+      # so defining SPEC_SUPPRESS_OPENMP -- and never defining SPEC_OPENMP --
+      # is what turns the parallel regions into ordinary serial loops.
+      list(APPEND SPEC_COMMON_DEFS "-DSPEC_SUPPRESS_OPENMP")
     endif ()
 
     # Byte order. Only some benchmarks read this macro, but defining it
@@ -207,6 +241,32 @@ macro (speccpu2026_add_include_dirs)
 endmacro ()
 
 
+# Add a "PREPARE:" line deleting output files left over from an earlier run.
+#
+# The rundir is built once, at build time, but lit may run the test in it any
+# number of times. Most outputs are stdout/stderr redirections, which truncate,
+# but a benchmark that opens its own output file gets to choose -- 737.gmsh_r
+# appends to spec.val -- and the second run then compares a doubled file
+# against the reference and fails. Only files the benchmark itself writes
+# belong here; deleting anything an earlier step produced would break the run.
+#
+# RUN_TYPE  (test, train or ref)
+# FILES     Files in the rundir to delete
+macro (speccpu2026_remove_stale_output)
+  cmake_parse_arguments(_arg "" "RUN_TYPE" "FILES" ${ARGN})
+
+  if ((NOT DEFINED _arg_RUN_TYPE) OR
+      (_arg_RUN_TYPE IN_LIST TEST_SUITE_RUN_TYPE))
+    set(_files)
+    foreach (_f IN LISTS _arg_FILES)
+      list(APPEND _files "${RUN_${_arg_RUN_TYPE}_DIR_REL}/${_f}")
+    endforeach ()
+    llvm_test_prepare(RUN_TYPE ${_arg_RUN_TYPE}
+      "${CMAKE_COMMAND}" -E rm -f ${_files})
+  endif ()
+endmacro ()
+
+
 # Add a "RUN:" line.
 #
 # RUN_TYPE   (test,train or ref)
@@ -219,10 +279,15 @@ endmacro ()
 #
 # STDERR     Write the benchmark's stderr into this file in the rundir.
 #
+# BINARY     Run this sibling binary instead of ${PROG}.
+#
+# SPEC_BINARY
+#            Run this tool out of the SPEC install's bin/ instead of ${PROG}.
+#
 # ARGN       Benchmark's command line arguments
 macro (speccpu2026_run_test)
   cmake_parse_arguments(_arg
-    "" "RUN_TYPE;SUITE_TYPE;STDOUT;STDERR;BINARY" "" ${ARGN})
+    "" "RUN_TYPE;SUITE_TYPE;STDOUT;STDERR;BINARY;SPEC_BINARY" "" ${ARGN})
 
   if ((NOT DEFINED _arg_SUITE_TYPE) OR
       (BENCHMARK_SUITE_TYPE IN_LIST _arg_SUITE_TYPE))
@@ -252,11 +317,24 @@ macro (speccpu2026_run_test)
         set(_binary "${_arg_BINARY}")
       endif ()
 
-      # Some benchmarks must be invoked with a relative path (SPEC made
-      # modifications that prepend another path to find the rundir).
-      file(RELATIVE_PATH _executable
-          "${RUN_${_arg_RUN_TYPE}_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/${_binary}")
-      set (_executable EXECUTABLE "${_executable}")
+      # SPEC_BINARY names a tool out of the SPEC install's bin/ instead, and is
+      # used as-is. 827.cppcheck_s and 838.diamond_s distil their output with
+      # `specperl sort.pl <file>` -- the benchmarks emit their findings in a
+      # nondeterministic order, so the reference outputs are of the sorted
+      # form. specperl is SPEC's own perl; nothing here builds it, and it runs
+      # fine without SPEC's environment (the sort.pl scripts are pure core
+      # perl).
+      if (DEFINED _arg_SPEC_BINARY)
+        set(_executable
+            EXECUTABLE "${TEST_SUITE_SPEC2026_ROOT}/bin/${_arg_SPEC_BINARY}")
+      else ()
+        # Some benchmarks must be invoked with a relative path (SPEC made
+        # modifications that prepend another path to find the rundir).
+        file(RELATIVE_PATH _executable
+            "${RUN_${_arg_RUN_TYPE}_DIR}"
+            "${CMAKE_CURRENT_BINARY_DIR}/${_binary}")
+        set (_executable EXECUTABLE "${_executable}")
+      endif ()
 
       llvm_test_run(
         ${_arg_UNPARSED_ARGUMENTS} ${_stdout} ${_stderr}
@@ -378,5 +456,41 @@ macro (speccpu2026_generate_inputs)
         COMMENT "Decompressing ${_archive} for ${PROG} (${_arg_RUN_TYPE})"
         VERBATIM)
     endforeach ()
+  endif ()
+endmacro ()
+
+
+# Generate an input by running the benchmark binary itself.
+#
+# 817.flac_s and 854.graph500_s have a `sub generate_inputs` that unpacks
+# nothing: it runs the benchmark once and that run's output is the next run's
+# input. flac decodes the shipped .flac back to the .wav it then re-encodes;
+# graph500 writes the graph file its BFS then reads. Without this the rundir
+# is missing a file and the first RUN: line fails outright.
+#
+# A POST_BUILD command rather than a RUN: line, for the same reason
+# speccpu2026_generate_inputs() is one: SPEC does not time input generation,
+# so neither may we. STDOUT is not optional bookkeeping -- graph500's
+# bfs_data_prep.out is one of the reference outputs the VERIFY: lines compare.
+#
+# Call this *after* speccpu2026_prepare_rundir(), like generate_inputs: the
+# POST_BUILD commands run in registration order and the inputs have to be in
+# the rundir first.
+#
+# STDOUT/STDERR  files in the rundir to redirect into
+# ARGN           the benchmark's command line arguments
+macro (speccpu2026_generate_inputs_run)
+  cmake_parse_arguments(_arg "" "RUN_TYPE;STDOUT;STDERR" "" ${ARGN})
+  if ((NOT DEFINED _arg_RUN_TYPE) OR
+      (_arg_RUN_TYPE IN_LIST TEST_SUITE_RUN_TYPE))
+    add_custom_command(TARGET ${PROG} POST_BUILD
+      COMMAND "${CMAKE_COMMAND}"
+        "-DCMD=$<TARGET_FILE:${PROG}>;${_arg_UNPARSED_ARGUMENTS}"
+        "-DWORKDIR=${RUN_${_arg_RUN_TYPE}_DIR}"
+        "-DOUT=${RUN_${_arg_RUN_TYPE}_DIR}/${_arg_STDOUT}"
+        "-DERR=${RUN_${_arg_RUN_TYPE}_DIR}/${_arg_STDERR}"
+        -P "${SPEC2026_CMAKE_DIR}/SpecCPU2026RunInputgen.cmake"
+      COMMENT "Generating ${_arg_STDOUT} inputs for ${PROG} (${_arg_RUN_TYPE})"
+      VERBATIM)
   endif ()
 endmacro ()

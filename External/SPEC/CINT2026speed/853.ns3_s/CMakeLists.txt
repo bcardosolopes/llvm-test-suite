@@ -1,4 +1,4 @@
-# 753.ns3_r
+# 853.ns3_s
 # Generated from SPEC's own runcpu build and setup logs by
 # clangir-upstream-report/spec2026-overlay/gen-cmakelists.py, then
 # reviewed by hand. Sources, -D/-I flags and RUN lines are exactly what
@@ -8,7 +8,13 @@ if (NOT TEST_SUITE_SPEC2026_ROOT)
   return ()
 endif ()
 
-speccpu2026_benchmark(RATE)
+speccpu2026_benchmark(SPEED ORIGIN 753.ns3_r)
+
+# Not a speccpu2026_inherit(../../CINT2026rate/753.ns3_r): unlike the
+# 2017 speed suites, this does not build the same binary as 753.ns3_r
+# -- runcpu compiles it with different flags, sources, reference outputs
+# or tolerances. Inheriting would silently build the wrong thing. ORIGIN
+# above is still what points SRC_DIR at the twin's sources.
 
 speccpu2026_add_include_dirs(
   ns-3.38/include
@@ -62,61 +68,71 @@ speccpu2026_run_test(
 speccpu2026_remove_stale_output(
   RUN_TYPE ref
   FILES
-    dctcp-example-fairness.dat
-    dctcp-example-s1-r1-throughput.dat
-    dctcp-example-s2-r2-throughput.dat
-    dctcp-example-s3-r1-throughput.dat
-    dctcp-example-t1-length.dat
-    dctcp-example-t2-length.dat
     mobile-scenario.xml
-    rlf_dl_thrput_2_eNB_ideal_rrc
     tcp-dynamic-pacing-cwnd.dat
+    tcp-dynamic-pacing-pacing-rate.dat
+    tcp-dynamic-pacing-packet-trace.dat
     tcp-dynamic-pacing-ssthresh.dat
+    tcp-validation-first-tcp-throughput.dat
+    tcp-validation-ping.dat
+    tcp-validation-queue-drop.dat
+    tcp-validation-second-dctcp-alpha.dat
+    tcp-validation-second-tcp-throughput.dat
 )
 
 speccpu2026_run_test(
-  mobile-scenario --simTimeMinutes=3 --RngSeed=1 --RngRun=1
-  STDOUT mobile-scenario_0.out
-  STDERR mobile-scenario_0.err
+  traffic-fqcodel --stopTime=120 --n0TcpType=bic --n1TcpType=reno
+  --bottleneckQueueType=codel --baseRtt=90ms --RngSeed=1 --RngRun=1
+  STDOUT traffic-fqcodel_0.out
+  STDERR traffic-fqcodel_0.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
-  tcp-pacing --simulationEndTime=500 --useEcn=false --RngSeed=1 --RngRun=1
+  tcp-pacing --simulationEndTime=750 --useEcn=true --RngSeed=1 --RngRun=1
   STDOUT tcp-pacing_1.out
   STDERR tcp-pacing_1.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
-  lena-radio-link-failure --numberOfEnbs=2 --interSiteDistance=800
-  --simTime=200 --RngSeed=1 --RngRun=1
-  STDOUT lena-radio-link-failure_2.out
-  STDERR lena-radio-link-failure_2.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  dctcp-example --enableSwitchEcn=true --flowStartupWindow=0.4
-  --convergenceTime=0.4 --measurementWindow=0.4 --RngSeed=1 --RngRun=1
-  STDOUT dctcp-example_3.out
-  STDERR dctcp-example_3.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  wifi-mixed-network --isUdp=0 --payloadSize=3072 --simulationTime=25
+  tcp-validation --stopTime=140s --firstTcpType=cubic --secondTcpType=dctcp
   --RngSeed=1 --RngRun=1
-  STDOUT wifi-mixed-network_4.out
-  STDERR wifi-mixed-network_4.err
+  STDOUT tcp-validation_2.out
+  STDERR tcp-validation_2.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
-  wifi-eht-network --simulationTime=0.2 --frequency=5 --useRts=1
-  --minExpectedThroughput=6 --maxExpectedThroughput=547 --RngSeed=1 --RngRun=1
-  STDOUT wifi-eht-network_5.out
-  STDERR wifi-eht-network_5.err
+  wifi-mixed-network --isUdp=1 --payloadSize=4096 --simulationTime=50
+  --RngSeed=1 --RngRun=1
+  STDOUT wifi-mixed-network_3.out
+  STDERR wifi-mixed-network_3.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  wifi-eht-network --simulationTime=.6 --udp=1 --downlink=0 --useRts=0
+  --nStations=5 --dlAckType=AGGR-MU-BAR --enableUlOfdma=1 --enableBsrp=1
+  --mcs=5 --muSchedAccessReqInterval=50ms --frequency2=6 --RngSeed=1
+  --RngRun=1
+  STDOUT wifi-eht-network_4.out
+  STDERR wifi-eht-network_4.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  wifi-aggregation --payloadSize=1732 --enableRts=false --distance=19
+  --simulationTime=120 --RngSeed=1 --RngRun=1
+  STDOUT wifi-aggregation_5.out
+  STDERR wifi-aggregation_5.err
+  RUN_TYPE ref
+)
+
+speccpu2026_run_test(
+  mobile-scenario --simTimeMinutes=5 --RngSeed=1 --RngRun=1
+  STDOUT mobile-scenario_6.out
+  STDERR mobile-scenario_6.err
   RUN_TYPE ref
 )
 

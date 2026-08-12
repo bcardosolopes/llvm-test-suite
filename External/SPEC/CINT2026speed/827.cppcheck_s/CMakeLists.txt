@@ -1,4 +1,4 @@
-# 727.cppcheck_r
+# 827.cppcheck_s
 # Generated from SPEC's own runcpu build and setup logs by
 # clangir-upstream-report/spec2026-overlay/gen-cmakelists.py, then
 # reviewed by hand. Sources, -D/-I flags and RUN lines are exactly what
@@ -8,10 +8,16 @@ if (NOT TEST_SUITE_SPEC2026_ROOT)
   return ()
 endif ()
 
-speccpu2026_benchmark(RATE)
+speccpu2026_benchmark(SPEED ORIGIN 727.cppcheck_r)
+
+# Not a speccpu2026_inherit(../../CINT2026rate/727.cppcheck_r): unlike the
+# 2017 speed suites, this does not build the same binary as 727.cppcheck_r
+# -- runcpu compiles it with different flags, sources, reference outputs
+# or tolerances. Inheriting would silently build the wrong thing. ORIGIN
+# above is still what points SRC_DIR at the twin's sources.
 
 ###############################################################################
-# cppcheck_r
+# cppcheck_s
 ###############################################################################
 
 speccpu2026_add_include_dirs(
@@ -24,18 +30,27 @@ speccpu2026_add_include_dirs(
   spec_inline_control
 )
 
+add_definitions(
+  -DSPEC_SPEED
+)
+
+add_compile_options(-pthread)
+list(APPEND LDFLAGS -pthread)
+
 ## test ######################################################################
 
-speccpu2026_remove_stale_output(
+speccpu2026_run_test(
+  --file-list=check_file_list --cppcheck-build-dir=. -j 1 --platform=unix64
+  STDOUT cppcheck_s.raw.out
+  STDERR cppcheck_s.raw.err
   RUN_TYPE test
-  FILES
-    hello_bogey.txt
 )
 
 speccpu2026_run_test(
-  --force hello.c --output-file=hello_bogey.txt --platform=unix64
-  STDOUT cppcheck_r.hello_bogey.out
-  STDERR cppcheck_r.hello_bogey.err
+  SPEC_BINARY specperl
+  sort.pl cppcheck_s.raw.out
+  STDOUT cppcheck_s.out
+  STDERR cppcheck_s.err
   RUN_TYPE test
 )
 
@@ -44,28 +59,23 @@ speccpu2026_run_test(
 speccpu2026_remove_stale_output(
   RUN_TYPE train
   FILES
-    lcode_bogey.txt
-    lcode_report.txt
-    mesh_bogey.txt
-    mesh_report.txt
+    lua_report.txt
 )
 
 speccpu2026_run_test(
-  --force lua-5.4.7/lcode.c --enable=all --checkers-report=lcode_report.txt
-  --output-file=lcode_bogey.txt --suppress=missingIncludeSystem
-  --platform=unix64
-  STDOUT cppcheck_r.lcode_bogey.out
-  STDERR cppcheck_r.lcode_bogey.err
+  --cppcheck-build-dir=lua-5.4.7 --enable=all --disable=unusedFunction
+  --suppress=toomanyconfigs --suppress=missingIncludeSystem
+  --checkers-report=lua_report.txt lua-5.4.7 -j 1 --platform=unix64
+  STDOUT cppcheck_s.raw.out
+  STDERR cppcheck_s.raw.err
   RUN_TYPE train
 )
 
 speccpu2026_run_test(
-  --force automaticMeshSizeField.cpp meshGRegionBoundaryLayer.cpp
-  meshGRegionLocalMeshMod.cpp --enable=all --checkers-report=mesh_report.txt
-  --output-file=mesh_bogey.txt --enable=all --suppress=missingIncludeSystem
-  --suppress=missingInclude --check-level=exhaustive --platform=unix64
-  STDOUT cppcheck_r.mesh_bogey.out
-  STDERR cppcheck_r.mesh_bogey.err
+  SPEC_BINARY specperl
+  sort.pl cppcheck_s.raw.out
+  STDOUT cppcheck_s.out
+  STDERR cppcheck_s.err
   RUN_TYPE train
 )
 
@@ -74,35 +84,23 @@ speccpu2026_run_test(
 speccpu2026_remove_stale_output(
   RUN_TYPE ref
   FILES
-    738_bogey.txt
-    738_report.txt
-    747_bogey.txt
-    747_report.txt
-    770_bogey.txt
-    770_report.txt
+    report.txt
 )
 
 speccpu2026_run_test(
-  --force 738-diamond-record.cpp --checkers-report=738_report.txt --enable=all
-  --output-file=738_bogey.txt --platform=unix64
-  STDOUT cppcheck_r.738_bogey.out
-  STDERR cppcheck_r.738_bogey.err
+  --file-list=check_file_list -f --suppress=normalCheckLevelMaxBranches
+  --checkers-report=report.txt --cppcheck-build-dir=src
+  --disable=unusedFunction -j 1 --platform=unix64
+  STDOUT cppcheck_s.raw.out
+  STDERR cppcheck_s.raw.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
-  --force 747-dealii-data_out_base.cc --checkers-report=747_report.txt
-  --enable=all --output-file=747_bogey.txt --platform=unix64
-  STDOUT cppcheck_r.747_bogey.out
-  STDERR cppcheck_r.747_bogey.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  --force 770-7z-SystemPage.cpp --checkers-report=770_report.txt
-  --output-file=770_bogey.txt --platform=unix64
-  STDOUT cppcheck_r.770_bogey.out
-  STDERR cppcheck_r.770_bogey.err
+  SPEC_BINARY specperl
+  sort.pl cppcheck_s.raw.out
+  STDOUT cppcheck_s.out
+  STDERR cppcheck_s.err
   RUN_TYPE ref
 )
 
@@ -110,23 +108,9 @@ speccpu2026_run_test(
 
 speccpu2026_verify_output(
   FILES
-    738_bogey.txt
-    738_report.txt
-    747_bogey.txt
-    747_report.txt
-    770_bogey.txt
-    770_report.txt
-    cppcheck_r.738_bogey.out
-    cppcheck_r.747_bogey.out
-    cppcheck_r.770_bogey.out
-    cppcheck_r.hello_bogey.out
-    cppcheck_r.lcode_bogey.out
-    cppcheck_r.mesh_bogey.out
-    hello_bogey.txt
-    lcode_bogey.txt
-    lcode_report.txt
-    mesh_bogey.txt
-    mesh_report.txt
+    cppcheck_s.out
+    lua_report.txt
+    report.txt
 )
 
 speccpu2026_add_executable(
@@ -234,11 +218,11 @@ speccpu2026_add_executable(
 speccpu2026_prepare_rundir()
 
 ###############################################################################
-# testrunner_r
+# testrunner_s
 ###############################################################################
 
-set(PROG ${BENCHMARK}.testrunner_r)
-speccpu2026_use_rundir(testrunner_r)
+set(PROG ${BENCHMARK}.testrunner_s)
+speccpu2026_use_rundir(testrunner_s)
 
 # Same flags as the primary binary above; add_definitions() and
 # include_directories() are directory-scoped, so they carry.
@@ -246,8 +230,8 @@ speccpu2026_use_rundir(testrunner_r)
 ## test ######################################################################
 
 speccpu2026_run_test(
-  STDOUT testrunner_r.out
-  STDERR testrunner_r.err
+  STDOUT testrunner_s.out
+  STDERR testrunner_s.err
   RUN_TYPE test
 )
 
@@ -255,7 +239,7 @@ speccpu2026_run_test(
 
 speccpu2026_verify_output(
   FILES
-    testrunner_r.out
+    testrunner_s.out
 )
 
 speccpu2026_add_executable(

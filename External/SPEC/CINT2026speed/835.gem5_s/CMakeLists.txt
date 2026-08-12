@@ -1,4 +1,4 @@
-# 735.gem5_r
+# 835.gem5_s
 # Generated from SPEC's own runcpu build and setup logs by
 # clangir-upstream-report/spec2026-overlay/gen-cmakelists.py, then
 # reviewed by hand. Sources, -D/-I flags and RUN lines are exactly what
@@ -8,7 +8,13 @@ if (NOT TEST_SUITE_SPEC2026_ROOT)
   return ()
 endif ()
 
-speccpu2026_benchmark(RATE)
+speccpu2026_benchmark(SPEED ORIGIN 735.gem5_r)
+
+# Not a speccpu2026_inherit(../../CINT2026rate/735.gem5_r): unlike the
+# 2017 speed suites, this does not build the same binary as 735.gem5_r
+# -- runcpu compiles it with different flags, sources, reference outputs
+# or tolerances. Inheriting would silently build the wrong thing. ORIGIN
+# above is still what points SRC_DIR at the twin's sources.
 
 ###############################################################################
 # gem5sim
@@ -85,68 +91,32 @@ speccpu2026_run_test(
 ## ref #######################################################################
 
 speccpu2026_run_test(
-  --stats-file=run_riscv_boot.py_o3_10_--max-ticks_10_000_000_000.stats.txt run_riscv_boot.py
-  o3 10 --max-ticks 10_000_000_000
-  STDOUT run_riscv_boot.py_o3_10_--max-ticks_10_000_000_000.out
-  STDERR run_riscv_boot.py_o3_10_--max-ticks_10_000_000_000.err
+  --stats-file=bwaves-train-simpt-3-match.py.stats.txt bwaves-train-simpt-3-match.py
+  STDOUT bwaves-train-simpt-3-match.py.out
+  STDERR bwaves-train-simpt-3-match.py.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
-  --stats-file=run_riscv_boot.py_timing_4_--max-ticks_20_000_000_000.stats.txt run_riscv_boot.py
-  timing 4 --max-ticks 20_000_000_000
-  STDOUT run_riscv_boot.py_timing_4_--max-ticks_20_000_000_000.out
-  STDERR run_riscv_boot.py_timing_4_--max-ticks_20_000_000_000.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  --stats-file=synthetic_traffic.py_LinearGenerator_21.stats.txt synthetic_traffic.py
-  LinearGenerator 21
-  STDOUT synthetic_traffic.py_LinearGenerator_21.out
-  STDERR synthetic_traffic.py_LinearGenerator_21.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  --stats-file=synthetic_traffic.py_LinearGenerator_74_--ruby.stats.txt synthetic_traffic.py
-  LinearGenerator 74 --ruby
-  STDOUT synthetic_traffic.py_LinearGenerator_74_--ruby.out
-  STDERR synthetic_traffic.py_LinearGenerator_74_--ruby.err
+  --stats-file=bwaves-train-simpt-3-o3cpu.py.stats.txt bwaves-train-simpt-3-o3cpu.py
+  STDOUT bwaves-train-simpt-3-o3cpu.py.out
+  STDERR bwaves-train-simpt-3-o3cpu.py.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
   BINARY ${BENCHMARK}.gem5stats
-  control.stat
-  m5out/run_riscv_boot.py_o3_10_--max-ticks_10_000_000_000.stats.txt
-  STDOUT run_riscv_boot.py_o3_10_--max-ticks_10_000_000_000_stats.out
-  STDERR run_riscv_boot.py_o3_10_--max-ticks_10_000_000_000_stats.err
+  control.stat m5out/bwaves-train-simpt-3-match.py.stats.txt
+  STDOUT bwaves-train-simpt-3-match.py_stats.out
+  STDERR bwaves-train-simpt-3-match.py_stats.err
   RUN_TYPE ref
 )
 
 speccpu2026_run_test(
   BINARY ${BENCHMARK}.gem5stats
-  control.stat
-  m5out/run_riscv_boot.py_timing_4_--max-ticks_20_000_000_000.stats.txt
-  STDOUT run_riscv_boot.py_timing_4_--max-ticks_20_000_000_000_stats.out
-  STDERR run_riscv_boot.py_timing_4_--max-ticks_20_000_000_000_stats.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  BINARY ${BENCHMARK}.gem5stats
-  control.stat m5out/synthetic_traffic.py_LinearGenerator_21.stats.txt
-  STDOUT synthetic_traffic.py_LinearGenerator_21_stats.out
-  STDERR synthetic_traffic.py_LinearGenerator_21_stats.err
-  RUN_TYPE ref
-)
-
-speccpu2026_run_test(
-  BINARY ${BENCHMARK}.gem5stats
-  control.stat m5out/synthetic_traffic.py_LinearGenerator_74_--ruby.stats.txt
-  STDOUT synthetic_traffic.py_LinearGenerator_74_--ruby_stats.out
-  STDERR synthetic_traffic.py_LinearGenerator_74_--ruby_stats.err
+  control.stat m5out/bwaves-train-simpt-3-o3cpu.py.stats.txt
+  STDOUT bwaves-train-simpt-3-o3cpu.py_stats.out
+  STDERR bwaves-train-simpt-3-o3cpu.py_stats.err
   RUN_TYPE ref
 )
 
@@ -154,11 +124,9 @@ speccpu2026_run_test(
 
 speccpu2026_verify_output(
   FILES
-    run_riscv_boot.py_o3_10_--max-ticks_10_000_000_000_stats.out
-    run_riscv_boot.py_timing_4_--max-ticks_20_000_000_000_stats.out
+    bwaves-train-simpt-3-match.py_stats.out
+    bwaves-train-simpt-3-o3cpu.py_stats.out
     synthetic_traffic.py_LinearGenerator_100_stats.out
-    synthetic_traffic.py_LinearGenerator_21_stats.out
-    synthetic_traffic.py_LinearGenerator_74_--ruby_stats.out
 )
 
 speccpu2026_add_executable(
@@ -2012,8 +1980,15 @@ speccpu2026_generate_inputs(
 speccpu2026_generate_inputs(
   RUN_TYPE ref
   FILES
-    riscv-lupio-busybox-img.xz
-    riscv-lupio-linux-kernel.xz
+    bwaves/bwaves.err.xz
+    bwaves/bwaves.in.xz
+    bwaves/bwaves.simout.xz
+    bwaves/bwaves2.simout.xz
+    bwaves/bwaves3.simout.xz
+    bwaves/checkpoints/train/0/cpt.SimPoint3/m5.cpt.xz
+    povray/input/ref/SPEC-benchmark.tga.xz
+    povray/input/ref/SPEC-benchmark.log.xz
+    povray/SPEC-benchmark.log.xz
 )
 
 ###############################################################################

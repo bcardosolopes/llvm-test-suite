@@ -20,7 +20,15 @@ add_definitions(
   -DOMNETPP_IMAGE_PATH=\".\"
 )
 
+add_compile_options(-fno-finite-math-only)
+
 ## test ######################################################################
+
+speccpu2026_remove_stale_output(
+  RUN_TYPE test
+  FILES
+    randomMesh-General-0.sca
+)
 
 speccpu2026_run_test(
   -f randomMesh.ini -c General
@@ -45,6 +53,16 @@ speccpu2026_run_test(
 
 ## train #####################################################################
 
+speccpu2026_remove_stale_output(
+  RUN_TYPE train
+  FILES
+    General-0.sca
+    General-1.sca
+    General-2.sca
+    General-3.sca
+    OneFifo-#0.sca
+)
+
 speccpu2026_run_test(
   -f randomMesh.ini -c General
   STDOUT omnetpp.General-0.out
@@ -60,6 +78,23 @@ speccpu2026_run_test(
 )
 
 ## ref #######################################################################
+
+speccpu2026_remove_stale_output(
+  RUN_TYPE ref
+  FILES
+    queuenet-AllocDealloc-0.sca
+    queuenet-CallCenter-0.sca
+    queuenet-ForkJoin-0.sca
+    queuenet-OneFifo-0.sca
+    queuenet-ResourceAllocation-0.sca
+    queuenet-Ring-0.sca
+    queuenet-SmallCQN-0.sca
+    queuenet-TandemFifos-0.sca
+    queuenet-Terminal-0.sca
+    randomMesh-General-0.sca
+    randomMesh-General-1.sca
+    randomMesh-General-2.sca
+)
 
 speccpu2026_run_test(
   -f randomMesh.ini -c General

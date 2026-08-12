@@ -63,6 +63,9 @@ add_definitions(
   -D__STDC_LIMIT_MACROS
 )
 
+add_compile_options(-pthread)
+list(APPEND LDFLAGS -pthread)
+
 ## test ######################################################################
 
 speccpu2026_run_test(

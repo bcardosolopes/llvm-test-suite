@@ -44,6 +44,12 @@ add_definitions(
 
 ## test ######################################################################
 
+speccpu2026_remove_stale_output(
+  RUN_TYPE test
+  FILES
+    t1.c.opts-O3_-finline-limit_50000.s
+)
+
 speccpu2026_run_test(
   t1.c -O3 -finline-limit=50000 -o t1.c.opts-O3_-finline-limit_50000.s
   STDOUT t1.c.opts-O3_-finline-limit_50000.out
@@ -52,6 +58,14 @@ speccpu2026_run_test(
 )
 
 ## train #####################################################################
+
+speccpu2026_remove_stale_output(
+  RUN_TYPE train
+  FILES
+    200.c.opts-O2.s
+    scilab.c.opts-O3.s
+    train01.c.opts-O3_-finline-limit_50000.s
+)
 
 speccpu2026_run_test(
   200.c -O2 -o 200.c.opts-O2.s
@@ -76,6 +90,14 @@ speccpu2026_run_test(
 )
 
 ## ref #######################################################################
+
+speccpu2026_remove_stale_output(
+  RUN_TYPE ref
+  FILES
+    gcc-pp.c.opts-O2_-fpic.s
+    gcc-smaller.c.opts-O3_-fipa-pta.s
+    ref32.c.opts-O3_-finline-limit_12000_-fno-tree-vrp.s
+)
 
 speccpu2026_run_test(
   gcc-pp.c -O2 -fpic -o gcc-pp.c.opts-O2_-fpic.s
